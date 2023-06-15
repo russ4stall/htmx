@@ -16,8 +16,14 @@ htmx.defineExtension('client-side-templates', {
         var handlebarsTemplate = htmx.closest(elt, "[handlebars-template]");
         if (handlebarsTemplate) {
             var data = JSON.parse(text);
-            var templateName = handlebarsTemplate.getAttribute('handlebars-template');
-            return Handlebars.partials[templateName](data);
+            var templateId = handlebarsTemplate.getAttribute('handlebars-template');
+            var templateElement = htmx.find('#' + templateId).innerHTML;
+            var renderTemplate = Handlebars.compile(templateElement);
+            if (renderTemplate) {
+                return renderTemplate(data);
+            } else {
+                throw "Unknown handlebars template: " + templateId;
+            }
         }
 
         var nunjucksTemplate = htmx.closest(elt, "[nunjucks-template]");
